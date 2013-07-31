@@ -6,7 +6,7 @@ Redmine::Plugin.register :redmine_document_request do
   url 'http://example.com/path/to/plugin'
   author_url 'http://example.com/about'
 
-  # settings :partial => 'document_request/settings'
+  settings :partial => 'document_request/settings'
 
   menu :top_menu, :document_request,
     {:controller => :document_request, :action => :index},

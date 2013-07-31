@@ -48,7 +48,6 @@ t = Tracker.create({
                  is_in_chlog: false, 
                  position: 4, 
                  is_in_roadmap: true, 
-                 fields_bits: 198
                })
 
 IssueQuery.create({ 
