@@ -44,6 +44,23 @@ module DocumentRequestPlugin
           
           project.trackers = [tracker]
 
+          # role
+
+          hash_for_role = { 
+            name: "Запрашивающий документы",
+            assignable: true,
+            builtin: 0,
+            permissions: [
+                          :view_issues,
+                          :add_issues,
+                          :add_issue_notes,
+                         ],
+            issues_visibility: "own"
+          }
+          
+          Role.create(hash_for_role)
+
+
           # custom fields
           hash_for_document_type_field = {
             name: "Тип документа", 
@@ -126,7 +143,6 @@ module DocumentRequestPlugin
           # query
           hash_for_per_type_query = { 
             name: "Заявки на документы (по типу)", 
-#           project_id: self.project_id, 
             filters: {
               "status_id"=>{:operator=>"o", :values=>[""]}, 
               "tracker_id"=>{:operator=>"=", :values=>["#{tracker.id}"]}}, 
@@ -146,7 +162,6 @@ module DocumentRequestPlugin
           project.queries << per_type_query 
 
           hash_for_per_user_query = { 
-#           project_id: project_id, 
             name: "Заявки на документы (по имени)", 
             filters: {
               "status_id"=> {:operator=>"o", :values=>[""]}, 

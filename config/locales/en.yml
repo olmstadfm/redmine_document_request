@@ -1,3 +1,5 @@
 # English strings go here for Rails i18n
 en:
   # my_label: "My label"
+  document_request: Document request
+  field_value_document_request_subject: Document request
