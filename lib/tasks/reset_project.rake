@@ -4,27 +4,6 @@ def mourn(str)
   puts "rip #{str}"
 end
 
-def due_date_calc(marker = Date.today)
-
-  case marker.strftime('%A')
-    when 'Saturday'
-      marker += 3.days
-    when 'Sunday'
-      marker += 2.days
-    else
-      days = Time.now.hour > 13 ? 2 : 1
-      while days > 0
-        days -=1
-        marker += 1.day
-        marker += 2.days if marker.saturday?
-      end
-  end
-  
-  marker
-
-end
-
-
 namespace :document_request do
 
   task :destroy => :environment do
@@ -56,16 +35,13 @@ namespace :document_request do
     # EnabledModule.create(name: 'document_request', project_id: project.id) 
 
     # нужно тоже самое, но через группы
+    # role = Role.find_by_name("Запрашивающий документы")
+    # users = Principal.where(type: 'User')
+    # users.shift # get rid of admin
+    # for user in users
+    #   Member.create(user: user, project: project, roles: [role])
+    # end
 
-
-
-
-    role = Role.find_by_name("Запрашивающий документы")
-    users = Principal.where(type: 'User')
-    users.shift # get rid of admin
-    for user in users
-      Member.create(user: user, project: project, roles: [role])
-    end
     puts "new meat"
 
   end

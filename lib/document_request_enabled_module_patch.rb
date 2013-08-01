@@ -46,9 +46,9 @@ module DocumentRequestPlugin
 
           # role
 
-          hash_for_role = { 
+          hash_for_requester_role = { 
             name: "Запрашивающий документы",
-            assignable: true,
+            assignable: false, 
             builtin: 0,
             permissions: [
                           :view_issues,
@@ -58,8 +58,43 @@ module DocumentRequestPlugin
             issues_visibility: "own"
           }
           
-          Role.create(hash_for_role)
+          Role.create(hash_for_requester_role)
 
+          hash_for_executor_role = {
+            name: "Исполнитель заявок на документ", 
+            assignable: true, 
+            builtin: 0, 
+            permissions: [
+                          :view_calendar,
+                          :view_document_request,
+                          :view_documents,
+                          :view_files,
+                          :view_gantt,
+                          :view_issues,
+                          :add_issues,
+                          :edit_issues,
+                          :add_issue_notes,
+                          :edit_issue_notes,
+                          :edit_own_issue_notes,
+                          :view_private_notes,
+                          :set_notes_private,
+                          :move_issues,
+                          :delete_issues,
+                          :manage_public_queries,
+                          :save_queries,
+                          :view_issue_watchers,
+                          :add_issue_watchers,
+                          :delete_issue_watchers,
+                          :browse_repository,
+                          :view_changesets,
+                          :view_time_entries,
+                          :view_wiki_pages,
+                          :view_wiki_edits
+                         ], 
+            issues_visibility: "all"
+          }
+
+          Role.create(hash_for_executor_role)
 
           # custom fields
           hash_for_document_type_field = {
