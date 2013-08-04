@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 require_dependency 'enabled_module'
 require_dependency 'issue_custom_field'
+require_dependency 'setting'
 
 module DocumentRequestPlugin
   module EnabledModulePatch
@@ -12,6 +13,7 @@ module DocumentRequestPlugin
       base.class_eval do
 
         after_create :document_request_module_enabled
+        before_destroy :document_request_module_disabled
 
       end
 
@@ -29,19 +31,31 @@ module DocumentRequestPlugin
           project = Project.find(self.project_id)
 
           # tracker
-          tracker = Tracker.create({
-                                     name: "Запрос на документы",
-                                     is_in_chlog: false, 
-                                     is_in_roadmap: true, 
-                                   })
+          # tracker = Tracker.create({
+          #                            name: "Запрос на документы",
+          #                            is_in_chlog: false, 
+          #                            is_in_roadmap: true, 
+          #                          })
 
-          source_tracker = Tracker.find(1)        # ошибка
-          source_role = Role.find(3)              # менеджер
-          target_tracker = tracker
-          target_role = source_role
+          # source_tracker = Tracker.find(1)        # ошибка
+          # source_role = Role.find(3)              # менеджер
+          # target_tracker = tracker
+          # target_role = source_role
 
-          WorkflowRule.copy(source_tracker, source_role, target_tracker, target_role )
-          
+          # WorkflowRule.copy(source_tracker, source_role, target_tracker, target_role )
+
+          tracker = Tracker.find(Setting[:plugin_redmine_document_request][:tracker_id])
+
+          tracker.core_fields = [
+                                 "assigned_to_id", 
+                                 "category_id", 
+                                 "fixed_version_id", 
+                                 "parent_issue_id", 
+                                 "start_date", 
+                                 "due_date"
+                                ]
+          tracker.save
+
           project.trackers = [tracker]
 
           # role
@@ -53,12 +67,14 @@ module DocumentRequestPlugin
             permissions: [
                           :view_issues,
                           :add_issues,
+                          :edit_issues,
                           :add_issue_notes,
                          ],
             issues_visibility: "own"
           }
           
-          Role.create(hash_for_requester_role)
+          requester_role = find_or_create(Role, hash_for_requester_role)
+          Setting[:plugin_redmine_document_request][:requester_role_id] = requester_role.id
 
           hash_for_executor_role = {
             name: "Исполнитель заявок на документ", 
@@ -94,7 +110,8 @@ module DocumentRequestPlugin
             issues_visibility: "all"
           }
 
-          Role.create(hash_for_executor_role)
+          executor_role = find_or_create(Role, hash_for_executor_role)
+          Setting[:plugin_redmine_document_request][:executor_role_id] = executor_role.id
 
           # custom fields
           hash_for_document_type_field = {
@@ -121,7 +138,8 @@ module DocumentRequestPlugin
             multiple: false
           }
 
-          document_type_field = IssueCustomField.create(hash_for_document_type_field)
+          document_type_field = find_or_create(IssueCustomField, hash_for_document_type_field)
+          Setting[:plugin_redmine_document_request][:document_type_field_id] = document_type_field.id
 
           tracker.custom_fields << document_type_field
           project.issue_custom_fields << document_type_field
@@ -145,7 +163,8 @@ module DocumentRequestPlugin
             multiple: false
           }
 
-          document_for_field = IssueCustomField.create(hash_for_document_for_field)
+          document_for_field = find_or_create(IssueCustomField, hash_for_document_for_field)
+          Setting[:plugin_redmine_document_request][:document_for_field_id] = document_for_field.id
 
           tracker.custom_fields << document_for_field
           project.issue_custom_fields << document_for_field
@@ -169,7 +188,8 @@ module DocumentRequestPlugin
             multiple: false
           }
 
-          company_name_field = IssueCustomField.create(hash_for_company_name_field)
+          company_name_field = find_or_create(IssueCustomField, hash_for_company_name_field)
+          Setting[:plugin_redmine_document_request][:company_name_field_id] = company_name_field.id
 
           tracker.custom_fields << company_name_field
           project.issue_custom_fields << company_name_field
@@ -178,6 +198,7 @@ module DocumentRequestPlugin
           # query
           hash_for_per_type_query = { 
             name: "Заявки на документы (по типу)", 
+            project_id: project.id,
             filters: {
               "status_id"=>{:operator=>"o", :values=>[""]}, 
               "tracker_id"=>{:operator=>"=", :values=>["#{tracker.id}"]}}, 
@@ -193,11 +214,14 @@ module DocumentRequestPlugin
             type: "IssueQuery"
           }
 
-          per_type_query = IssueQuery.create(hash_for_per_type_query)
+          per_type_query = IssueQuery.where(name: "Заявки на документы (по типу)").last || IssueQuery.create(hash_for_per_type_query)
+          Setting[:plugin_redmine_document_request][:per_type_query_id] = per_type_query.id
           project.queries << per_type_query 
+          
 
           hash_for_per_user_query = { 
             name: "Заявки на документы (по имени)", 
+            project_id: project.id,
             filters: {
               "status_id"=> {:operator=>"o", :values=>[""]}, 
               "tracker_id"=>{:operator=>"=", :values=>["#{tracker.id}"]}
@@ -216,10 +240,44 @@ module DocumentRequestPlugin
             type: "IssueQuery"
           }
 
-          per_user_query = IssueQuery.create(hash_for_per_user_query)
+          per_user_query = IssueQuery.where(name: "Заявки на документы (по имени)").last || IssueQuery.create(hash_for_per_user_query)
+          Setting[:plugin_redmine_document_request][:per_user_query_id] = per_user_query.id
           project.queries << per_user_query 
 
         end
+      end
+
+      def document_request_module_disabled
+        # IssueCustomField.all.map(&:destroy)
+
+        # IssueQuery.all.map(&:destroy)
+
+        # tracker = Tracker.find_by_name("Запрос на документы")
+        # if tracker
+        #   Issue.where(tracker_id: tracker.id).map(&:destroy) 
+        #   tracker.destroy 
+        # end
+
+        # Member.all.map(&:destroy)
+
+        # project = Project.find_by_name("Запрос на документы")
+        # project.destroy if project
+
+
+        # Setting[:plugin_redmine_document_request][:requester_role_id] = requester_role.id
+        # Setting[:plugin_redmine_document_request][:executor_role_id] = executor_role.id
+        # Setting[:plugin_redmine_document_request][:document_type_field_id] = document_type_field.id
+        # Setting[:plugin_redmine_document_request][:document_for_field_id] = document_for_field.id
+        # Setting[:plugin_redmine_document_request][:company_name_field_id] = company_name_field.id
+        # Setting[:plugin_redmine_document_request][:per_type_query_id] = per_type_query.id
+        # Setting[:plugin_redmine_document_request][:per_user_query_id] = per_user_query.id
+
+      end
+
+      # rails 4, hobo style
+      # seems this doesn't work with nested hashes
+      def find_or_create(model, hash)
+        model.send(:where, hash).last || model.send(:create, hash)
       end
 
     end

@@ -1,4 +1,6 @@
 # Russian strings go here for Rails i18n
 ru:
   document_request: Заявки на документ
-  field_value_document_request_subject: Заявка на документ
+  field_value_document_request_subject: Запрос на документ
+
+  label_document_for_field: Поле "Документ для"

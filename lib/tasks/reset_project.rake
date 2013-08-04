@@ -32,6 +32,7 @@ namespace :document_request do
 
   task :create => :environment do
     project = Project.create(name: "Запрос на документы", identifier: "document-request-project")
+
     # EnabledModule.create(name: 'document_request', project_id: project.id) 
 
     # нужно тоже самое, но через группы
