@@ -12,9 +12,6 @@ class DocumentRequestController < ApplicationController
 
     auto_enable_module
 
-#   add_custom_fields_to_tracker
-#   add_role_to_executor
-
     redirect_to new_project_issue_path(
                                        'format' => 'html',
                                        'project_id' => @project_id,
@@ -35,18 +32,6 @@ class DocumentRequestController < ApplicationController
     unless EnabledModule.where(module_arguments).last
       EnabledModule.create(module_arguments)
     end
-  end
-
-  def add_custom_fields_to_tracker
-    tracker = Tracker.find(@tracker_id)
-    tracker.custom_fields << document_type_field
-    project.issue_custom_fields << document_type_field
-  end
-
-  def add_role_to_executor
-    member = Member.where(user_id: @assigned_to_id, project_id: @project_id).last
-    role = Role.find_by_name('Исполнитель заявок на документ')
-    member.roles << role
   end
 
   def due_date_calc

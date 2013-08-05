@@ -73,19 +73,22 @@ module DocumentRequestPlugin
       end
 
       def document_request_tracker_setup
-          @document_request_tracker = Tracker.find(Setting[:plugin_redmine_document_request][:tracker_id])
-
-          @document_request_tracker.core_fields = [
-                                                   "assigned_to_id", 
-                                                   "category_id", 
-                                                   "fixed_version_id", 
-                                                   "parent_issue_id", 
-                                                   "start_date", 
-                                                   "due_date"
-                                                  ]
-          @document_request_tracker.save
-
+        @document_request_tracker = Tracker.find(Setting[:plugin_redmine_document_request][:tracker_id])
+        
+        @document_request_tracker.core_fields = [
+                                                 "assigned_to_id", 
+                                                 "category_id", 
+                                                 "fixed_version_id", 
+                                                 "parent_issue_id", 
+                                                 "start_date", 
+                                                 "due_date"
+                                                ]
+        @document_request_tracker.save
+        
+        unless @document_request_project.trackers.include?(@document_request_tracker)
           @document_request_project.trackers << @document_request_tracker
+        end
+
       end
 
       def document_request_role_setup
