@@ -38,6 +38,8 @@ module DocumentRequestPlugin
 
         setting = Setting[:plugin_redmine_document_request]
         
+        # here goes some stuff that will help erase module completly, if such necessity arises
+
         # IssueCustomField.all.map(&:destroy)
 
         # IssueQuery.all.map(&:destroy)
@@ -53,14 +55,13 @@ module DocumentRequestPlugin
         # project = Project.find_by_name("Запрос на документы")
         # project.destroy if project
 
-
         # Setting[:plugin_redmine_document_request][:requester_role_id] = requester_role.id
         # Setting[:plugin_redmine_document_request][:executor_role_id] = executor_role.id
         # Setting[:plugin_redmine_document_request][:document_type_field_id] = document_type_field.id
         # Setting[:plugin_redmine_document_request][:document_for_field_id] = document_for_field.id
         # Setting[:plugin_redmine_document_request][:company_name_field_id] = company_name_field.id
 
-        Setting[:plugin_redmine_document_request][:per_type_query_id] = per_type_query.id
+        # Setting[:plugin_redmine_document_request][:per_type_query_id] = per_type_query.id
         # Setting[:plugin_redmine_document_request][:per_user_query_id] = per_user_query.id
 
       end
