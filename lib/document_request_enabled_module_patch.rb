@@ -85,7 +85,7 @@ module DocumentRequestPlugin
                                                   ]
           @document_request_tracker.save
 
-          @document_request_project.trackers = [@document_request_tracker]
+          @document_request_project.trackers << @document_request_tracker
       end
 
       def document_request_role_setup

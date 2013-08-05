@@ -12,8 +12,7 @@ class DocumentRequestController < ApplicationController
 
     auto_enable_module
 
-    add_custom_fields_to_tracker
-
+#   add_custom_fields_to_tracker
 #   add_role_to_executor
 
     redirect_to new_project_issue_path(
@@ -25,7 +24,6 @@ class DocumentRequestController < ApplicationController
                                        'issue[due_date]' => due_date_calc,
                                        'issue[assigned_to_id]' => @assigned_to_id,
                                        "issue[custom_field_values][#{document_for_field_id}]" => User.current.id
-#                                       document_for_field => User.current.id
                                        )
 
   end
@@ -40,9 +38,9 @@ class DocumentRequestController < ApplicationController
   end
 
   def add_custom_fields_to_tracker
-    # tracker = Tracker.find(@tracker_id)
-    # tracker.custom_fields << document_type_field
-    # project.issue_custom_fields << document_type_field
+    tracker = Tracker.find(@tracker_id)
+    tracker.custom_fields << document_type_field
+    project.issue_custom_fields << document_type_field
   end
 
   def add_role_to_executor
