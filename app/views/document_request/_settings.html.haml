@@ -26,6 +26,14 @@
   %label= l(:label_document_for_field)
   = select_tag("settings[document_for_field_id]", options_from_collection_for_select(IssueCustomField.all, :id, :name, (@settings[:document_for_field_id].to_i rescue nil)), :prompt => t(:prompt_please_select))
 
+%p
+  %label= l(:label_document_type_field)
+  = select_tag("settings[document_type_field_id]", options_from_collection_for_select(IssueCustomField.all, :id, :name, (@settings[:document_type_field_id].to_i rescue nil)), :prompt => t(:prompt_please_select))
+
+%p
+  %label= l(:label_company_name_field)
+  = select_tag("settings[company_name_field_id]", options_from_collection_for_select(IssueCustomField.all, :id, :name, (@settings[:company_name_field_id].to_i rescue nil)), :prompt => t(:prompt_please_select))
+
 %hr
 
 %p

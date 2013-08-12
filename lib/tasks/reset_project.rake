@@ -6,6 +6,25 @@ end
 
 namespace :document_request do
 
+  task :add_categories => :environment do
+
+    categories = {
+                  "копия трудовой книжки" => 5, 
+                  "характеристика с места работы"=> 5,
+                  "справка на визу"=> 5,
+                  "справка для банка"=> 5,
+                  "2-НДФЛ"=> 6
+                 }
+
+    project = Project.find_by_name("Запрос на документы")
+
+    for name, user in categories
+      puts name
+      project.issue_categories.create({name: name, assigned_to_id: user })
+    end
+
+  end
+
   task :destroy => :environment do
 
     IssueCustomField.all.map(&:destroy)
@@ -47,7 +66,7 @@ namespace :document_request do
 
   end
 
-  task :reset => [:destroy, :create]
+  task :reset => [:destroy, :create, :add_categories]
 
   task :due => :environment do
     

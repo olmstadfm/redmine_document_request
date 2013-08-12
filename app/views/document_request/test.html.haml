@@ -1,1 +1,14 @@
-%h2= "Запрос на документ"
+%h2
+  = "Запрос на документ"
+
+= form_tag(:controller => 'document_request', :action => 'create', :method => 'get') do
+  %p
+    = "тип документа:"
+    = select_tag("document_type_id", options_from_collection_for_select(@project.issue_categories, :id, :name), :prompt => t(:prompt_please_select))
+  %p
+    = "документ для"
+    = select_tag("document_for", principals_options_for_select(Principal.active.all, User.current, :prompt => t(:prompt_please_select)))
+  %p
+    = "дата выполнения: " 
+    = @due_date
+  = submit_tag "Отправить"

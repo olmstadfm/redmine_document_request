@@ -36,8 +36,6 @@ module DocumentRequestPlugin
 
       def document_request_module_disabled
 
-        setting = Setting[:plugin_redmine_document_request]
-        
         # here goes some stuff that will help erase module completly, if such necessity arises
 
         # IssueCustomField.all.map(&:destroy)
@@ -156,8 +154,7 @@ module DocumentRequestPlugin
                             "характеристика с места работы",
                             "справка на визу",
                             "справка для банка в свободной форме",
-                            "2-НДФЛ",
-                            "другое"
+                            "2-НДФЛ"
                            ],
           regexp: "", 
           min_length: 0, 
@@ -174,6 +171,9 @@ module DocumentRequestPlugin
 
         @document_request_document_type_field = find_or_create(IssueCustomField, hash_for_document_type_field)
         Setting[:plugin_redmine_document_request][:document_type_field_id] = @document_request_document_type_field.id
+
+        logger.error @document_request_document_type_field.id.inspect
+
 
         @document_request_tracker.custom_fields << @document_request_document_type_field
         @document_request_project.issue_custom_fields << @document_request_document_type_field

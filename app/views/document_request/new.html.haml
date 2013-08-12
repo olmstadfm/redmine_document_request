@@ -1,0 +1,30 @@
+%h2
+  = "Запрос на документ"
+
+= form_tag({:controller => 'document_request', :action => 'create', :method => 'get'}, :html => {:id => 'issue-form', :multipart => true}) do
+
+  %table
+
+    %tr
+      %td= l(:field_company_name)
+      %td= select_tag("issue[custom_field_values][#{@company_name_field_id}]", options_for_select(@companies), :prompt => t(:prompt_please_select))
+
+    %tr
+      %td= l(:field_document_for)
+      %td= select_tag("issue[custom_field_values][#{@document_for_field_id}]", principals_options_for_select(User.active.all, User.current))
+
+    %tr
+      %td= l(:field_document_type)
+      %td= select_tag("issue[custom_field_values][#{@document_type_field_id}]", options_from_collection_for_select(@categories, 'name', 'name'), :prompt => t(:prompt_please_select))
+
+    %tr
+      %td= l(:field_due_date) 
+      %td
+        = text_field_tag('issue[due_date]', @due_date)
+        = calendar_for('issue_due_date')
+
+    %tr
+      %td= submit_tag "Отправить"
+
+%p
+  = "Запрошенный вами документ будет готов: при заказе документа до 15.00 - на следующий день после заказа, при заказе документа после 15.00 - через 2 дня после заказа (+2)"
