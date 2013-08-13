@@ -7,6 +7,10 @@ ru:
   label_document_type_field: Поле "Тип документа"
   label_company_name_field: Поле "Название компании"
 
+  field_document_request_comment: Комментарий 
+
   field_company_name: Компания
   field_document_type: Тип документа
   field_document_for: Документ для
+
+  document_request_timing_note: "Запрошенный вами документ будет готов: при заказе документа до 15.00 — на следующий день после заказа, при заказе документа после 15.00 — через 2 дня после заказа."

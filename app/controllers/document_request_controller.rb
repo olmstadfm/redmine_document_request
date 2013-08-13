@@ -22,62 +22,68 @@ class DocumentRequestController < ApplicationController
   # end
 
   def new
-
-    @project = Project.find(@project_id)
-    @due_date = due_date_calc
-
-    @company_name_field_id = @setting[:company_name_field_id]
-    @document_for_field_id = @setting[:document_for_field_id]
-    @document_type_field_id = @setting[:document_type_field_id]
-
-    @categories = @project.issue_categories
-    @companies = IssueCustomField.find(@company_name_field_id).possible_values.map{|c| [c,c] }
-
   end
 
   def create
 
-    @project = Project.find(@project_id)
-
-    @document_type_field_id = @setting[:document_type_field_id]
-    @document_type = params[:issue][:custom_field_values][@document_type_field_id.to_s]
+    @issue.project_id = @project_id
+    @issue.tracker_id = @tracker_id
+    @issue.author = User.current
+    @issue.is_private = true
 
     user_id = params[:issue][:custom_field_values][@document_for_field_id.to_s]
     @user = User.find(user_id)
 
-    issue = Issue.new
+    @document_type = params[:issue][:custom_field_values][@document_type_field_id.to_s]
+    @issue.category_id = IssueCategory.where(project_id: @project_id, name: @document_type).first.try(:id)
 
-    issue.project_id = @project_id
-    issue.tracker_id = @tracker_id
-    issue.author = User.current
-    issue.subject = "Запрос на документ: #{@document_type} для #{@user.name}"
-    issue.safe_attributes = params[:issue]
-    issue.category_id = IssueCategory.where(project_id: @project_id, name: @document_type).first.try(:id)
-    issue.is_private = true
-
-    if issue.save
-      redirect_to controller: 'issues', action: 'show', id: issue.id
+    custom_document = params.delete(:custom)
+    unless @document_type == 'другое'
+      @issue.subject = "Запрос на документ: #{@document_type} для #{@user.name}"
     else
-      render action: 'new' 
+      @issue.subject = "Запрос на документ: #{custom_document[:comment]} для #{@user.name}"
+      @issue.description = "#{custom_document[:comment]}"
+      @issue.assigned_to_id = @assigned_to_id
     end
-    # redirect_to do
-    #   if issue.save
-    #     issue_path(issue)
-    #   else
-    #     {:controller => 'document_request', :action => 'new'}
-    #   end
-    # end
+
+    @issue.safe_attributes = params[:issue]
+
+    
+
+    if @issue.valid? && @issue.due_date >= due_date_calc
+      @issue.save
+      redirect_to controller: 'issues', action: 'show', id: @issue.id
+    else
+      i
+      render 'new' 
+    end
 
   end
 
   private
 
   def settings_setup
+
     @setting = Setting[:plugin_redmine_document_request]
+
     @project_id = @setting[:project_id]
     @assigned_to_id = @setting[:assigned_to_id]
     @tracker_id = @setting[:tracker_id]
-    @document_for_field_id = @setting[:document_for_field_id].to_i
+
+    @company_name_field_id = @setting[:company_name_field_id]
+    @document_for_field_id = @setting[:document_for_field_id]
+    @document_type_field_id = @setting[:document_type_field_id]
+
+    @project = Project.find(@project_id)
+    @due_date = due_date_calc
+
+    @categories = @project.issue_categories.sort_by{|c| -c.assigned_to_id.to_i} # issue_categories
+
+
+    @companies = IssueCustomField.find(@company_name_field_id).possible_values.map{|c| [c,c] }
+
+    @issue = Issue.new
+
   end
 
   def auto_enable_module

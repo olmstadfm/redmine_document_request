@@ -13,7 +13,8 @@ namespace :document_request do
                   "характеристика с места работы"=> 5,
                   "справка на визу"=> 5,
                   "справка для банка"=> 5,
-                  "2-НДФЛ"=> 6
+                  "2-НДФЛ"=> 6,
+                  "другое"=> nil
                  }
 
     project = Project.find_by_name("Запрос на документы")
@@ -42,6 +43,9 @@ namespace :document_request do
 
     Member.all.map(&:destroy)
     mourn "Members"
+
+    Setting.where(name: "plugin_redmine_document_request").first.destroy
+    mourn "Setting"
 
     project = Project.find_by_name("Запрос на документы")
     project.destroy if project

@@ -1,30 +1,54 @@
+:css
+  .splitcontent > input, select, textarea {
+    width:100%;
+  }
+
 %h2
   = "Запрос на документ"
 
-= form_tag({:controller => 'document_request', :action => 'create', :method => 'get'}, :html => {:id => 'issue-form', :multipart => true}) do
+= error_messages_for @issue
 
-  %table
+%div.box{width: "100%"}
+  = form_tag({:controller => 'document_request', :action => 'create', :method => 'get'}, :html => {:id => 'issue-form', :multipart => true}) do
 
-    %tr
-      %td= l(:field_company_name)
-      %td= select_tag("issue[custom_field_values][#{@company_name_field_id}]", options_for_select(@companies), :prompt => t(:prompt_please_select))
+    .splitcontent
 
-    %tr
-      %td= l(:field_document_for)
-      %td= select_tag("issue[custom_field_values][#{@document_for_field_id}]", principals_options_for_select(User.active.all, User.current))
+      .splitcontentleft{style: 'width: "35%"'}
+        %table
+          %tr
+            %td= l(:field_company_name)
+            %td= select_tag("issue[custom_field_values][#{@company_name_field_id}]", options_for_select(@companies), :prompt => t(:prompt_please_select))
+          %tr
+            %td= l(:field_document_for)
+            %td= select_tag("issue[custom_field_values][#{@document_for_field_id}]", principals_options_for_select(User.active.all, User.current))
+          %tr
+            %td= l(:field_document_type)
+            %td= select_tag("issue[custom_field_values][#{@document_type_field_id}]", options_from_collection_for_select(@categories, 'name', 'name'), :prompt => t(:prompt_please_select), :onchange => "someFunction(this.value)")
+          %tr
+            %td= l(:field_due_date) 
+            %td
+              = text_field_tag('issue[due_date]', @due_date, :style=>"width: 50%;")
+              = calendar_for('issue_due_date')
+          %tr
+            %td= submit_tag "Отправить"
 
-    %tr
-      %td= l(:field_document_type)
-      %td= select_tag("issue[custom_field_values][#{@document_type_field_id}]", options_from_collection_for_select(@categories, 'name', 'name'), :prompt => t(:prompt_please_select))
+      .splitcontentleft{style: 'width: "60%"'}
+        %div{id: 'custom-document', style: 'display: none;'}
+          %table
+            %tr
+              %td= "Название документа"
+              %td= text_field_tag 'custom[title]', nil, :size => '40'
+            %tr
+              %td= "Комментарий"
+              %td= text_area_tag 'custom[comment]', nil, :size => '40x5'
 
-    %tr
-      %td= l(:field_due_date) 
-      %td
-        = text_field_tag('issue[due_date]', @due_date)
-        = calendar_for('issue_due_date')
+%p= l(:document_request_timing_note)
 
-    %tr
-      %td= submit_tag "Отправить"
-
-%p
-  = "Запрошенный вами документ будет готов: при заказе документа до 15.00 - на следующий день после заказа, при заказе документа после 15.00 - через 2 дня после заказа (+2)"
+:javascript
+  function someFunction(arg) { 
+    if(arg=="другое"){
+      $("#custom-document").css("display", "block")
+    } else {
+      $("#custom-document").css("display", "none");
+    }
+  }
