@@ -31,9 +31,7 @@ class DocumentRequestController < ApplicationController
     @issue.author = User.current
     @issue.is_private = true
 
-    user_id = params[:issue][:custom_field_values][@document_for_field_id.to_s]
-    @user = User.find(user_id)
-
+    @user = User.find(params[:issue][:custom_field_values][@document_for_field_id.to_s])
     @document_type = params[:issue][:custom_field_values][@document_type_field_id.to_s]
     @issue.category_id = IssueCategory.where(project_id: @project_id, name: @document_type).first.try(:id)
 
@@ -45,16 +43,16 @@ class DocumentRequestController < ApplicationController
       @issue.description = "#{custom_document[:comment]}"
       @issue.assigned_to_id = @assigned_to_id
     end
-
     @issue.safe_attributes = params[:issue]
-
-    
+    params[:custom] = custom_document
 
     if @issue.valid? && @issue.due_date >= due_date_calc
       @issue.save
       redirect_to controller: 'issues', action: 'show', id: @issue.id
     else
-      i
+      if @issue.due_date < due_date_calc
+        @issue.errors.messages[:due_date] = [l(:error_due_date_to_early)]
+      end
       render 'new' 
     end
 

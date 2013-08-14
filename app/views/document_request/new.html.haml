@@ -3,6 +3,10 @@
     width:100%;
   }
 
+  td.label {
+    text-align: right;
+  }
+
 %h2
   = "Запрос на документ"
 
@@ -13,34 +17,46 @@
 
     .splitcontent
 
-      .splitcontentleft{style: 'width: "35%"'}
+      .splitcontentleft{style: 'width: "35%";'}
         %table
           %tr
-            %td= l(:field_company_name)
+            %td.label
+              = l(:field_company_name)
+              %span.required= " *"
             %td= select_tag("issue[custom_field_values][#{@company_name_field_id}]", options_for_select(@companies), :prompt => t(:prompt_please_select))
           %tr
-            %td= l(:field_document_for)
+            %td.label
+              = l(:field_document_for)
+              %span.required= " *"
             %td= select_tag("issue[custom_field_values][#{@document_for_field_id}]", principals_options_for_select(User.active.all, User.current))
           %tr
-            %td= l(:field_document_type)
+            %td.label
+              = l(:field_document_type)
+              %span.required= " *"
             %td= select_tag("issue[custom_field_values][#{@document_type_field_id}]", options_from_collection_for_select(@categories, 'name', 'name'), :prompt => t(:prompt_please_select), :onchange => "someFunction(this.value)")
           %tr
-            %td= l(:field_due_date) 
+            %td.label
+              = l(:field_due_date) 
+              %span.required= " *"
             %td
               = text_field_tag('issue[due_date]', @due_date, :style=>"width: 50%;")
               = calendar_for('issue_due_date')
           %tr
-            %td= submit_tag "Отправить"
+            %td= submit_tag l(:button_create)
 
-      .splitcontentleft{style: 'width: "60%"'}
+      .splitcontentleft{style: 'width: "60%";'}
         %div{id: 'custom-document', style: 'display: none;'}
           %table
             %tr
-              %td= "Название документа"
-              %td= text_field_tag 'custom[title]', nil, :size => '40'
+              %td.label
+                = l(:label_custom_document_name)
+                %span.required= " *"
+              %td= text_field_tag 'custom[title]', (params[:custom][:title] rescue nil), :size => '40'
             %tr
-              %td= "Комментарий"
-              %td= text_area_tag 'custom[comment]', nil, :size => '40x5'
+              %td.label
+                = l(:field_document_request_comment)
+                %span.required= " *"
+              %td= text_area_tag 'custom[comment]', (params[:custom][:comment] rescue nil) , :size => '40x5'
 
 %p= l(:document_request_timing_note)
 
@@ -52,3 +68,8 @@
       $("#custom-document").css("display", "none");
     }
   }
+
+- if params[:custom] && params[:custom].values.any?{|v| v.present?} then 
+  :javascript
+    window.onload = function() { $("#custom-document").css("display", "block") }
+    

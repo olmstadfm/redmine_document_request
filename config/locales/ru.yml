@@ -3,9 +3,12 @@ ru:
   document_request: Заявки на документ
   field_value_document_request_subject: Подготовить документ
 
+  prompt_please_select: "Выберите пожалуйста"
+
   label_document_for_field: Поле "Документ для"
   label_document_type_field: Поле "Тип документа"
   label_company_name_field: Поле "Название компании"
+
 
   field_document_request_comment: Комментарий 
 
@@ -14,3 +17,6 @@ ru:
   field_document_for: Документ для
 
   document_request_timing_note: "Запрошенный вами документ будет готов: при заказе документа до 15.00 — на следующий день после заказа, при заказе документа после 15.00 — через 2 дня после заказа."
+  error_due_date_to_early: меньше срока выполнения заявки
+
+  label_custom_document_name: Название документа

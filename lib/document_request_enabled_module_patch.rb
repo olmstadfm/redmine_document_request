@@ -71,7 +71,7 @@ module DocumentRequestPlugin
       end
 
       def document_request_tracker_setup
-        @document_request_tracker = Tracker.find(Setting[:plugin_redmine_document_request][:tracker_id])
+        @document_request_tracker = Tracker.find(Setting[:plugin_redmine_document_request][:tracker_id]) # fixme
         
         @document_request_tracker.core_fields = [
                                                  "assigned_to_id", 
@@ -154,7 +154,8 @@ module DocumentRequestPlugin
                             "характеристика с места работы",
                             "справка на визу",
                             "справка для банка в свободной форме",
-                            "2-НДФЛ"
+                            "2-НДФЛ",
+                            "другое"
                            ],
           regexp: "", 
           min_length: 0, 
