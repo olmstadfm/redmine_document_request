@@ -1,13 +1,3 @@
--# %p
--#   %label= l(:label_contract_request_manager_plural)
--#   = select_tag("settings[principal_id]", principals_options_for_select(Principal.active.all, (Principal.find(@settings[:principal_id]) rescue nil)), :prompt => t(:prompt_please_select))
--# %p
--#   %label= l(:label_project)
--#   = select_tag("settings[project_id]", project_tree_options_for_select(Project.active.all(:order => :name), :selected => (Project.find(@settings[:project_id]) rescue nil)), :prompt => t(:prompt_please_select))
--# %p
--#   %label= l(:label_tracker)
--#   = select_tag("settings[tracker_id]", options_from_collection_for_select(Tracker.all(:order => :position), :id, :name, (@settings[:tracker_id].to_i rescue nil)), :prompt => t(:prompt_please_select))
-
 %p
   %label= l(:label_project)
   = select_tag("settings[project_id]", project_tree_options_for_select(Project.active.all(:order => :name), :selected => (Project.find(@settings[:project_id]) rescue nil)), :prompt => t(:prompt_please_select))
@@ -26,15 +16,20 @@
   %label= l(:label_document_for_field)
   = select_tag("settings[document_for_field_id]", options_from_collection_for_select(IssueCustomField.all, :id, :name, (@settings[:document_for_field_id].to_i rescue nil)), :prompt => t(:prompt_please_select))
 
-%p
-  %label= l(:label_document_type_field)
-  = select_tag("settings[document_type_field_id]", options_from_collection_for_select(IssueCustomField.all, :id, :name, (@settings[:document_type_field_id].to_i rescue nil)), :prompt => t(:prompt_please_select))
+-# %p
+-#   %label= l(:label_document_type_field)
+-#   = select_tag("settings[document_type_field_id]", options_from_collection_for_select(IssueCustomField.all, :id, :name, (@settings[:document_type_field_id].to_i rescue nil)), :prompt => t(:prompt_please_select))
 
 %p
   %label= l(:label_company_name_field)
   = select_tag("settings[company_name_field_id]", options_from_collection_for_select(IssueCustomField.all, :id, :name, (@settings[:company_name_field_id].to_i rescue nil)), :prompt => t(:prompt_please_select))
 
 %hr
+
+%p
+  %label= l(:label_other_category)
+  - @options_for_other_category = begin Project.find(@settings[:project_id]).issue_categories rescue IssueCategory.all end
+  = select_tag("settings[other_category_id]", options_from_collection_for_select(@options_for_other_category, :id, :name, (@settings[:other_category_id].to_i rescue nil)), :prompt => t(:prompt_please_select))
 
 %p
   %label= l(:label_assigned_to)

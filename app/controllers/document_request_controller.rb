@@ -4,23 +4,6 @@ class DocumentRequestController < ApplicationController
 
   before_filter :settings_setup
 
-  # def index
-
-  #   auto_enable_module
-
-  #   redirect_to new_project_issue_path(
-  #                                      'format' => 'html',
-  #                                      'project_id' => @project_id,
-  #                                      'issue[tracker_id]' => @tracker_id,
-  #                                      'issue[is_private]' => 1,
-  #                                      'issue[subject]' => l(:field_value_document_request_subject),
-  #                                      'issue[due_date]' => due_date_calc,
-  #                                      'issue[assigned_to_id]' => @assigned_to_id,
-  #                                      "issue[custom_field_values][#{@document_for_field_id}]" => User.current.id
-  #                                      )
-
-  # end
-
   def new
   end
 
@@ -31,27 +14,41 @@ class DocumentRequestController < ApplicationController
     @issue.author = User.current
     @issue.is_private = true
 
-    @user = User.find(params[:issue][:custom_field_values][@document_for_field_id.to_s])
-    @document_type = params[:issue][:custom_field_values][@document_type_field_id.to_s]
-    @issue.category_id = IssueCategory.where(project_id: @project_id, name: @document_type).first.try(:id)
+    
+    if (category_id = params[:issue][:category_id]).present?
+      @document_type = IssueCategory.find(category_id.to_i).name
+      @issue.category_id = category_id.to_i
+    end
 
-    custom_document = params.delete(:custom)
-    unless @document_type == 'другое'
-      @issue.subject = "Запрос на документ: #{@document_type} для #{@user.name}"
+    @custom_document = params.delete(:custom)
+    custom_document_valid = true
+    unless @document_type == @other_category_name
+      @issue.subject = "#{l(:value_document_request_subject)}: #{@document_type}"
     else
-      @issue.subject = "Запрос на документ: #{custom_document[:comment]} для #{@user.name}"
-      @issue.description = "#{custom_document[:comment]}"
-      @issue.assigned_to_id = @assigned_to_id
+      if @custom_document[:title].present? && @custom_document[:comment].present?
+        @issue.subject = "#{l(:value_document_request_subject)}: #{@custom_document[:title]}"
+        @issue.description = "#{@custom_document[:comment]}"
+        @issue.assigned_to_id = @assigned_to_id
+      else
+        custom_document_valid = false
+      end
     end
     @issue.safe_attributes = params[:issue]
-    params[:custom] = custom_document
+    params[:custom] = @custom_document
 
-    if @issue.valid? && @issue.due_date >= due_date_calc
+    if @issue.valid? && @issue.due_date >= due_date_calc && @issue.category_id && custom_document_valid
       @issue.save
       redirect_to controller: 'issues', action: 'show', id: @issue.id
     else
       if @issue.due_date < due_date_calc
         @issue.errors.messages[:due_date] = [l(:error_due_date_to_early)]
+      end
+      unless @issue.category_id
+        @issue.errors.messages[:category] = [l(:empty, scope: "activerecord.errors.messages")]
+      end
+      unless custom_document_valid
+        @issue.errors.messages[:subject] = [l(:empty, scope: "activerecord.errors.messages")]
+        @issue.errors.messages[:description] = [l(:empty, scope: "activerecord.errors.messages")]
       end
       render 'new' 
     end
@@ -70,7 +67,9 @@ class DocumentRequestController < ApplicationController
 
     @company_name_field_id = @setting[:company_name_field_id]
     @document_for_field_id = @setting[:document_for_field_id]
-    @document_type_field_id = @setting[:document_type_field_id]
+
+    @other_category_id = @setting[:other_category_id]
+    @other_category_name = IssueCategory.find(@other_category_id).try(:name)
 
     @project = Project.find(@project_id)
     @due_date = due_date_calc

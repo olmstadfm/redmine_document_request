@@ -17,7 +17,7 @@ namespace :document_request do
                   "другое"=> nil
                  }
 
-    project = Project.find_by_name("Запрос на документы")
+    project = Project.find_by_name("Заявки на документ")
 
     for name, user in categories
       puts name
@@ -34,7 +34,7 @@ namespace :document_request do
     IssueQuery.all.map(&:destroy)
     mourn "IssueQuery"
 
-    tracker = Tracker.find_by_name("Запрос на документы")
+    tracker = Tracker.find_by_name("Заявки на документ")
     if tracker
       Issue.where(tracker_id: tracker.id).map(&:destroy) 
       tracker.destroy 
@@ -44,17 +44,18 @@ namespace :document_request do
     Member.all.map(&:destroy)
     mourn "Members"
 
-    Setting.where(name: "plugin_redmine_document_request").first.destroy
+    setting = Setting.where(name: "plugin_redmine_document_request").first
+    setting.destroy if setting
     mourn "Setting"
 
-    project = Project.find_by_name("Запрос на документы")
+    project = Project.find_by_name("Заявки на документ")
     project.destroy if project
     mourn "Project"
 
   end
 
   task :create => :environment do
-    project = Project.create(name: "Запрос на документы", identifier: "document-request-project")
+    project = Project.create(name: "Заявки на документ", identifier: "document-request-project")
 
     # EnabledModule.create(name: 'document_request', project_id: project.id) 
 

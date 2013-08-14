@@ -1,7 +1,22 @@
 # English strings go here for Rails i18n
 en:
-  # my_label: "My label"
-  document_request: Document request
-  field_value_document_request_subject: Document request
 
-  document_request_timing_note: fixme
+  document_request: Document requests
+  value_document_request_subject: Document request
+
+  prompt_please_select: "Please select..."
+
+  label_document_for_field: Field "Document for"
+  label_company_name_field: Field "Company name"
+  label_other_category: Category for custom documents
+  label_custom_document_name: Document title
+
+  field_document_request_comment: Comment 
+  field_company_name: Company
+  field_document_type: Document type
+  field_document_for: Document for
+
+  document_request_timing_note: Request filled before 15-00 will be ready tomorrow, otherwise day after tomorrow. 
+
+  error_due_date_to_early: is too early
+

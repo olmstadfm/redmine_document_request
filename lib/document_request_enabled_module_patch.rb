@@ -36,32 +36,6 @@ module DocumentRequestPlugin
 
       def document_request_module_disabled
 
-        # here goes some stuff that will help erase module completly, if such necessity arises
-
-        # IssueCustomField.all.map(&:destroy)
-
-        # IssueQuery.all.map(&:destroy)
-
-        # tracker = Tracker.find_by_name("Запрос на документы")
-        # if tracker
-        #   Issue.where(tracker_id: tracker.id).map(&:destroy) 
-        #   tracker.destroy 
-        # end
-
-        # Member.all.map(&:destroy)
-
-        # project = Project.find_by_name("Запрос на документы")
-        # project.destroy if project
-
-        # Setting[:plugin_redmine_document_request][:requester_role_id] = requester_role.id
-        # Setting[:plugin_redmine_document_request][:executor_role_id] = executor_role.id
-        # Setting[:plugin_redmine_document_request][:document_type_field_id] = document_type_field.id
-        # Setting[:plugin_redmine_document_request][:document_for_field_id] = document_for_field.id
-        # Setting[:plugin_redmine_document_request][:company_name_field_id] = company_name_field.id
-
-        # Setting[:plugin_redmine_document_request][:per_type_query_id] = per_type_query.id
-        # Setting[:plugin_redmine_document_request][:per_user_query_id] = per_user_query.id
-
       end
 
       private
@@ -76,7 +50,6 @@ module DocumentRequestPlugin
         @document_request_tracker.core_fields = [
                                                  "assigned_to_id", 
                                                  "category_id", 
-                                                 "fixed_version_id", 
                                                  "parent_issue_id", 
                                                  "start_date", 
                                                  "due_date"
@@ -146,39 +119,6 @@ module DocumentRequestPlugin
 
       def document_request_custom_fields_setup
 
-        hash_for_document_type_field = {
-          name: "Тип документа", 
-          field_format: "list", 
-          possible_values: [
-                            "копия трудовой книжки",
-                            "характеристика с места работы",
-                            "справка на визу",
-                            "справка для банка в свободной форме",
-                            "2-НДФЛ",
-                            "другое"
-                           ],
-          regexp: "", 
-          min_length: 0, 
-          max_length: 0, 
-          is_required: true, 
-          is_for_all: false, 
-          is_filter: true, 
-          searchable: true,
-          default_value: "",
-          editable: true,
-          visible: true,
-          multiple: false
-        }
-
-        @document_request_document_type_field = find_or_create(IssueCustomField, hash_for_document_type_field)
-        Setting[:plugin_redmine_document_request][:document_type_field_id] = @document_request_document_type_field.id
-
-        logger.error @document_request_document_type_field.id.inspect
-
-
-        @document_request_tracker.custom_fields << @document_request_document_type_field
-        @document_request_project.issue_custom_fields << @document_request_document_type_field
-
         hash_for_document_for_field = {
           type: "IssueCustomField", 
           name: "Документ для", 
@@ -208,7 +148,10 @@ module DocumentRequestPlugin
           name: "Компания", 
           field_format: "list", 
           possible_values: [
-                            "Горкапстрой"
+                            "Горкапстрой",
+                            "НВК-Холдинг",
+                            "Строй-Альянс",
+                            "НПП Строительство"
                            ],
           regexp: "", 
           min_length: 0, 
@@ -233,29 +176,6 @@ module DocumentRequestPlugin
 
       def document_request_query_setup
 
-        hash_for_per_type_query = { 
-          name: "Заявки на документы (по типу)", 
-          project_id: @document_request_project.id,
-          filters: {
-            "status_id"=>{:operator=>"o", :values=>[""]}, 
-            "tracker_id"=>{:operator=>"=", :values=>["#{@document_request_tracker.id}"]}}, 
-          user_id: 1, 
-          is_public: true, 
-          column_names: [:"cf_#{@document_request_document_for_field.id}",
-                         :status, 
-                         :priority, 
-                         :assigned_to, 
-                         :due_date], 
-          sort_criteria: [],
-          group_by: "cf_#{@document_request_document_type_field.id}",
-          type: "IssueQuery"
-        }
-
-        @document_request_per_type_query = IssueQuery.where(name: "Заявки на документы (по типу)").last || IssueQuery.create(hash_for_per_type_query)
-        Setting[:plugin_redmine_document_request][:per_type_query_id] = @document_request_per_type_query.id
-        @document_request_project.queries << @document_request_per_type_query 
-        
-
         hash_for_per_user_query = { 
           name: "Заявки на документы (по имени)", 
           project_id: @document_request_project.id,
@@ -263,13 +183,13 @@ module DocumentRequestPlugin
             "status_id"=> {:operator=>"o", :values=>[""]}, 
             "tracker_id"=>{:operator=>"=", :values=>["#{@document_request_tracker.id}"]}
           }, 
-          user_id: 1, 
+          user_id: 2, 
           is_public: true, 
           column_names: [
-                         :"cf_#{@document_request_document_type_field.id}", 
-                         :due_date, 
                          :status, 
-                         :priority, 
+                         :priority,
+                         :category,
+                         :due_date,
                          :assigned_to
                         ], 
           sort_criteria: [["due_date", "desc"]], 
@@ -280,6 +200,30 @@ module DocumentRequestPlugin
         @document_request_per_user_query = IssueQuery.where(name: "Заявки на документы (по имени)").last || IssueQuery.create(hash_for_per_user_query)
         Setting[:plugin_redmine_document_request][:per_user_query_id] = @document_request_per_user_query.id
         @document_request_project.queries << @document_request_per_user_query 
+
+
+        hash_for_per_type_query = {
+          name: "Заявки на документы (по типу)", 
+          project_id: @document_request_project.id,
+          filters: {
+            "status_id"=>{ :operator=>"o", :values=>[""]}, 
+            "tracker_id"=>{:operator=>"=", :values=>["#{@document_request_tracker.id}"]}}, 
+          user_id: 2, 
+          is_public: true, 
+          column_names: [
+                         :"cf_#{@document_request_document_for_field.id}", 
+                         :status, 
+                         :priority,
+                         :assigned_to, 
+                         :due_date], 
+          sort_criteria: [], 
+          group_by: "category",
+          type: "IssueQuery"
+        }
+
+        @document_request_per_type_query = IssueQuery.where(name: "Заявки на документы (по типу)").last || IssueQuery.create(hash_for_per_type_query)
+        Setting[:plugin_redmine_document_request][:per_type_query_id] = @document_request_per_type_query.id
+        @document_request_project.queries << @document_request_per_type_query 
 
       end
 
