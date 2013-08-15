@@ -2,6 +2,7 @@
 class DocumentRequestController < ApplicationController
   unloadable
 
+  before_filter :require_login
   before_filter :settings_setup
 
   def new
