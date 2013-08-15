@@ -20,15 +20,15 @@ end
 
 Rails.configuration.to_prepare do
 
-  [:enabled_module, :issues_controller].each do |cl|
+  [:enabled_module, :issue_category].each do |cl|
     require "document_request_#{cl}_patch"
   end
 
-  require_dependency 'issues_controller'
+  require_dependency 'issue_category'
 
   [
    [EnabledModule, DocumentRequestPlugin::EnabledModulePatch],
-   [IssuesController, DocumentRequestPlugin::IssuesControllerPatch]
+   [IssueCategory, DocumentRequestPlugin::IssueCategoryPatch]
   ].each do |cl, patch|
     cl.send(:include, patch) unless cl.included_modules.include? patch
   end

@@ -15,6 +15,9 @@ module DocumentRequestPlugin
         after_create :document_request_module_enabled
         before_destroy :document_request_module_disabled
 
+        validator = IssueCategory._validators[:name].find{|v| v.class == ActiveModel::Validations::LengthValidator}
+        validator.instance_eval{ @options = {:maximum=>60} }
+
       end
 
     end
