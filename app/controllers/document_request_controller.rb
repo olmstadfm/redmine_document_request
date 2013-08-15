@@ -17,8 +17,10 @@ class DocumentRequestController < ApplicationController
 
     
     if (category_id = params[:issue][:category_id]).present?
-      @document_type = IssueCategory.find(category_id.to_i).name
+      @category = IssueCategory.find(category_id.to_i) 
+      @document_type = @category.name
       @issue.category_id = category_id.to_i
+      @issue.assigned_to_id = @category.assigned_to_id
     end
 
     @custom_document = params.delete(:custom)
