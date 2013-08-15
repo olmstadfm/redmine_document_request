@@ -38,6 +38,7 @@ class DocumentRequestController < ApplicationController
     params[:custom] = @custom_document
 
     if @issue.valid? && @issue.due_date >= due_date_calc && @issue.category_id && custom_document_valid
+      @issue.start_date = Date.today
       @issue.save
       redirect_to controller: 'issues', action: 'show', id: @issue.id
     else
