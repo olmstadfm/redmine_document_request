@@ -17,7 +17,7 @@
 
     .splitcontent
 
-      .splitcontentleft{style: 'width: "35%";'}
+      %div{style: 'float: left; width: "35%";'}
         %table
           %tr
             %td.label
@@ -44,7 +44,7 @@
           %tr
             %td= submit_tag l(:button_create)
 
-      .splitcontentleft{style: 'width: "60%";'}
+      %div{style: 'float: left; margin-left: 10%; width: "60%";'}
         %div{id: 'custom-document', style: 'display: none;'}
           %table
             %tr
