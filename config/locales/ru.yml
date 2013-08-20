@@ -1,6 +1,6 @@
 # Russian strings go here for Rails i18n
 ru:
-  document_request: Заявки на документ
+  document_request: Заявки на документы и роуминг
   value_document_request_subject: Запрос на документ
 
   prompt_please_select: "Выберите пожалуйста"

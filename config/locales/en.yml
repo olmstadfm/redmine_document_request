@@ -1,7 +1,7 @@
 # English strings go here for Rails i18n
 en:
 
-  document_request: Document requests
+  document_request: Document and roaming requests
   value_document_request_subject: Document request
 
   prompt_please_select: "Please select..."

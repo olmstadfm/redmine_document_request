@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 Redmine::Plugin.register :redmine_document_request do
-  name 'Document Request plugin'
+  name 'Document Request'
   author 'antonovgks'
   description 'Запрос на документы.'
   version '0.0.1'
