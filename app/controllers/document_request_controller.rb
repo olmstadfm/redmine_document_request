@@ -78,7 +78,7 @@ class DocumentRequestController < ApplicationController
     @project = Project.find(@project_id)
     @due_date = due_date_calc
 
-    @categories = @project.issue_categories.sort_by{|c| -c.assigned_to_id.to_i} # issue_categories
+    @categories = @project.issue_categories.sort_by{|c| c.name}
 
 
     @companies = IssueCustomField.find(@company_name_field_id).possible_values.map{|c| [c,c] }
