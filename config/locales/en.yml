@@ -18,6 +18,11 @@ en:
   field_document_type: Request type
   field_document_for: Document for
 
+  field_roaming_country: Country
+  field_roaming_turn_on_date: Roaming turn on date
+  field_roaming_turn_off_date: Roaming turn off date
+
+
   document_request_timing_note: Request filled before 15-00 will be ready tomorrow, otherwise day after tomorrow. 
 
   error_due_date_to_early: is too early

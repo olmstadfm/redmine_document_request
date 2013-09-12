@@ -2,8 +2,10 @@
 class DocumentRequestController < ApplicationController
   unloadable
 
+  helper CustomFieldsHelper
+
   before_filter :require_login
-  before_filter :settings_setup
+  before_filter :settings_setup, :only => [:new, :create]
 
   def new
   end
@@ -11,36 +13,43 @@ class DocumentRequestController < ApplicationController
   def create
 
     @issue.project_id = @project_id
-    @issue.tracker_id = @tracker_id
     @issue.author = User.current
     @issue.is_private = true
-
     
-    if (category_id = params[:issue][:category_id]).present?
+    category_id = params[:issue][:category_id]
+
+    if category_id.present?
       @category = IssueCategory.find(category_id.to_i) 
       @document_type = @category.name
       @issue.category_id = category_id.to_i
+
+      # rubynovich broke automatical issue assigment by applying
+      # category. now you must fill assigned_to_id manually.
       @issue.assigned_to_id = @category.assigned_to_id
+
+      # unless category_id == @roaming_category_id
+      #   @issue.tracker_id = @tracker_id
+      # else
+      #   @issue.tracker_id = @roaming_tracker.id
+      # end
+
+      case @category.id
+        when 80 # @other_category_id
+          process_custom_document
+        when @roaming_category_id
+          process_roaming
+        else
+          @issue.subject = "#{l(:value_document_request_subject)}: #{@document_type}"
+          @issue.tracker_id = @tracker_id
+      end
+
     end
 
-    @custom_document = params.delete(:custom)
-    custom_document_valid = true
-    unless @document_type == @other_category_name
-      @issue.subject = "#{l(:value_document_request_subject)}: #{@document_type}"
-    else
-      if @custom_document[:title].present? && @custom_document[:comment].present?
-        @issue.subject = "#{l(:value_document_request_subject)}: #{@custom_document[:title]}"
-        @issue.description = "#{@custom_document[:comment]}"
-        @issue.assigned_to_id = @assigned_to_id
-      else
-        custom_document_valid = false
-      end
-    end
-    @issue.safe_attributes = params[:issue]
-    params[:custom] = @custom_document
+    @issue.safe_attributes = params[:issue] ##################
+
     @issue.start_date = Date.today
 
-    if @issue.valid? && @issue.due_date >= due_date_calc && @issue.category_id && custom_document_valid
+    if @issue.valid? && @issue.due_date >= due_date_calc && @issue.category_id
       @issue.save
       redirect_to controller: 'issues', action: 'show', id: @issue.id
     else
@@ -50,7 +59,7 @@ class DocumentRequestController < ApplicationController
       unless @issue.category_id
         @issue.errors.messages[:category] = [l(:empty, scope: "activerecord.errors.messages")]
       end
-      unless custom_document_valid
+      unless true
         @issue.errors.messages[:subject] = [l(:empty, scope: "activerecord.errors.messages")]
         @issue.errors.messages[:description] = [l(:empty, scope: "activerecord.errors.messages")]
       end
@@ -61,6 +70,22 @@ class DocumentRequestController < ApplicationController
 
   private
 
+  def process_custom_document
+    @custom_document = params.delete(:custom)
+    if @custom_document[:title].present? && @custom_document[:comment].present?
+      @issue.subject = "#{l(:value_document_request_subject)}: #{@custom_document[:title]}"
+      @issue.description = "#{@custom_document[:comment]}"
+      @issue.assigned_to_id = @assigned_to_id
+      @issue.tracker_id = @tracker_id
+    end
+    params[:custom] = @custom_document
+  end
+
+  def process_roaming
+    @issue.subject = "Test"
+    @issue.tracker_id = @roaming_tracker.id
+  end
+
   def settings_setup
 
     @setting = Setting[:plugin_redmine_document_request]
@@ -70,9 +95,9 @@ class DocumentRequestController < ApplicationController
     @tracker_id = @setting[:tracker_id]
 
     @company_name_field_id = @setting[:company_name_field_id]
-    @document_for_field_id = @setting[:document_for_field_id]
+    @document_for_field_id = @setting[:document_for_field_id].to_i
 
-    @other_category_id = @setting[:other_category_id]
+    @other_category_id = @setting[:other_category_id].to_i
     @other_category_name = IssueCategory.find(@other_category_id).try(:name)
 
     @project = Project.find(@project_id)
@@ -80,10 +105,17 @@ class DocumentRequestController < ApplicationController
 
     @categories = @project.issue_categories.sort_by{|c| c.name}
 
+    # fixme
+    @roaming_tracker = Tracker.find(11)
+    @roaming_country_field_id = 50
+    @roaming_turn_on_date_field_id = 48
+    @roaming_turn_off_date_field_id = 49
+    @roaming_category_id = 81
 
     @companies = IssueCustomField.find(@company_name_field_id).possible_values.map{|c| [c,c] }
 
-    @issue = Issue.new
+    @issue = @project.issues.new
+    # @issue.tracker = @roaming_tracker
 
   end
 

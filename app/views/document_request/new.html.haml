@@ -25,12 +25,15 @@
             %td.label
               = l(:field_company_name)
               %span.required= " *"
-            %td= select_tag("issue[custom_field_values][#{@company_name_field_id}]", options_for_select(@companies), :prompt => t(:prompt_please_select))
+            %td
+              = custom_field_tag('issue', CustomValue.new(custom_field_id: @company_name_field_id))
           %tr
             %td.label
               = l(:field_document_for)
               %span.required= " *"
-            %td= select_tag("issue[custom_field_values][#{@document_for_field_id}]", principals_options_for_select(User.active.all, User.current))
+            %td
+              = select_tag("issue[custom_field_values][#{@document_for_field_id}]", principals_options_for_select(User.active.all, User.current))
+              = # custom_field_tag('issue', CustomValue.new(custom_field_id: @document_for_field_id))
           %tr
             %td.label
               = l(:field_document_type)
@@ -46,7 +49,7 @@
           %tr
             %td= submit_tag l(:button_create)
 
-      %div{style: 'float: left; margin-left: 10%; width: "60%";'}
+      %div{style: 'float: left; margin-left: 10%; width: "70%";'}
         %div{id: 'custom-document', style: 'display: none;'}
           %table
             %tr
@@ -60,15 +63,50 @@
                 %span.required= " *"
               %td= text_area_tag 'custom[comment]', (params[:custom][:comment] rescue nil) , :size => '40x5'
 
+      %div{style: 'float: left; margin-left: 10%; width: "70%";'}
+        %div{id: 'roaming', style: 'display: none;'}
+          %table
+            %tr
+              %td.label
+                = l(:field_roaming_country)
+                %span.required= " *"
+              %td
+                = custom_field_tag('issue', CustomValue.new(custom_field_id: @roaming_country_field_id ))
+            %tr
+              %td.label
+                = l(:field_roaming_turn_on_date)
+                %span.required= " *"
+              %td
+                = # custom_field_tag('issue', CustomValue.new(custom_field_id: @roaming_turn_on_date_field_id))
+                = text_field_tag("issue[custom_field_values][#{@roaming_turn_on_date_field_id}]", "", :style=>"width: 50%;")
+                = calendar_for("issue_custom_field_values_#{@roaming_turn_on_date_field_id}")
+            %tr
+              %td.label
+                = l(:field_roaming_turn_off_date)
+                %span.required= " *"
+              %td
+                = # custom_field_tag('issue', CustomValue.new(custom_field_id: @roaming_turn_off_date_field_id))
+                = text_field_tag("issue[custom_field_values][#{@roaming_turn_off_date_field_id}]", "", :style=>"width: 50%;")
+                = calendar_for("issue_custom_field_values_#{@roaming_turn_off_date_field_id}")
+
 %p= l(:document_request_timing_note)
 
 :javascript
+
   function switchCustomDocumentForm(arg) { 
-   if(arg=="#{@other_category_id}"){
-      $("#custom-document").css("display", "block")
-    } else {
-      $("#custom-document").css("display", "none");
+
+    $("#custom-document").css("display", "none");
+    $("#roaming").css("display", "none");             
+
+    switch(arg){
+      case "#{@other_category_id}":
+        $("#custom-document").css("display", "block");
+        break;
+      case "81":
+        $("#roaming").css("display", "block");      
+        break;
     }
+
   }
 
 - if params[:custom] && params[:custom].values.any?{|v| v.present?} then 
