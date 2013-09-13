@@ -7,6 +7,7 @@ ru:
 
   label_new_document_header: "Новая заявка"
 
+  label_document_tracker: Трекер для заявок на документы
   label_document_for_field: Поле "Документ для"
   label_company_name_field: Поле "Название компании"
   label_other_category: Категория для документов, отсутствующих в перечне
@@ -17,9 +18,14 @@ ru:
   field_document_type: Тип заявки
   field_document_for: Документ для
 
+  label_roaming_tracker: Трекер для роуминга
   field_roaming_country: Страна
   field_roaming_turn_on_date: Дата включения роуминга
   field_roaming_turn_off_date: Дата отключения роуминга
+  label_roaming_country: Поле "Страна"
+  label_roaming_turn_on_date: Поле "Дата включения роуминга"
+  label_roaming_turn_off_date: Поле "Дата отключения роуминга"
+  label_roaming_category: Категория для заявок на роуминг
 
   document_request_timing_note: "Запрошенный вами документ будет готов: при заказе документа до 15.00 — на следующий день после заказа, при заказе документа после 15.00 — через 2 дня после заказа."
   error_due_date_to_early: меньше срока выполнения заявки

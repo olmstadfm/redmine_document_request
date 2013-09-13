@@ -34,6 +34,8 @@ module DocumentRequestPlugin
           document_request_role_setup
           document_request_custom_fields_setup
           document_request_query_setup
+          roaming_request_tracker_setup
+          roaming_request_custom_fields_setup
         end
       end
 
@@ -42,6 +44,9 @@ module DocumentRequestPlugin
       end
 
       private
+
+
+
 
       def document_request_project_setup
         @document_request_project = Project.find(self.project_id)
@@ -62,6 +67,100 @@ module DocumentRequestPlugin
         unless @document_request_project.trackers.include?(@document_request_tracker)
           @document_request_project.trackers << @document_request_tracker
         end
+
+      end
+
+      def roaming_request_tracker_setup
+        @roaming_request_tracker = Tracker.find(Setting[:plugin_redmine_document_request][:roaming_tracker_id]) # fixme
+        
+        @roaming_request_tracker.core_fields = [
+                                                 "assigned_to_id", 
+                                                 "category_id", 
+                                                 "parent_issue_id", 
+                                                 "start_date", 
+                                                 "due_date"
+                                                ]
+        @roaming_request_tracker.save
+        
+        unless @document_request_project.trackers.include?(@roaming_request_tracker)
+          @document_request_project.trackers << @roaming_request_tracker
+        end
+
+      end
+
+      def roaming_request_custom_fields_setup
+
+        hash_for_country_field = {
+          type: "IssueCustomField", 
+          name: "Страна", 
+          field_format: "string", 
+          possible_values: nil,
+          regexp: "", 
+          min_length: 0, 
+          max_length: 0, 
+          is_required: true, 
+          is_for_all: false, 
+          is_filter: true, 
+          searchable: true, 
+          default_value: nil, 
+          editable: true, 
+          visible: true, 
+          multiple: false
+        }
+
+        @roaming_request_country_field = find_or_create(IssueCustomField, hash_for_country_field)
+        Setting[:plugin_redmine_document_request][:country_field_id] = @roaming_request_country_field.id
+
+        @roaming_request_tracker.custom_fields << @roaming_request_country_field
+        @document_request_project.issue_custom_fields << @roaming_request_country_field
+
+        hash_for_roaming_on_field = {
+          type: "IssueCustomField",
+          name: "Дата включения роуминга",
+          field_format: "date",
+          possible_values: nil,
+          regexp: "",
+          min_length: 0,
+          max_length: 0,
+          is_required: true,
+          is_for_all: false,
+          is_filter: false,
+          searchable: false,
+          default_value: "",
+          editable: true,
+          visible: true,
+          multiple: false
+        }
+
+        @roaming_request_roaming_on_field = find_or_create(IssueCustomField, hash_for_roaming_on_field)
+        Setting[:plugin_redmine_document_request][:roaming_on_field_id] = @roaming_request_roaming_on_field.id
+
+        @roaming_request_tracker.custom_fields << @roaming_request_roaming_on_field
+        @document_request_project.issue_custom_fields << @roaming_request_roaming_on_field
+
+        hash_for_roaming_off_field = {
+          type: "IssueCustomField",
+          name: "Дата отключения роуминга",
+          field_format: "date",
+          possible_values: nil,
+          regexp: "",
+          min_length: 0,
+          max_length: 0,
+          is_required: true,
+          is_for_all: false,
+          is_filter: false,
+          searchable: false,
+          default_value: "",
+          editable: true,
+          visible: true,
+          multiple: false
+        }
+
+        @roaming_request_roaming_off_field = find_or_create(IssueCustomField, hash_for_roaming_off_field)
+        Setting[:plugin_redmine_document_request][:roaming_off_field_id] = @roaming_request_roaming_off_field.id
+
+        @roaming_request_tracker.custom_fields << @roaming_request_roaming_off_field
+        @document_request_project.issue_custom_fields << @roaming_request_roaming_off_field
 
       end
 

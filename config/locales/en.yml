@@ -8,6 +8,7 @@ en:
 
   label_new_document_header: "New request"
 
+  label_document_tracker: Document request tracker
   label_document_for_field: Field "Document for"
   label_company_name_field: Field "Company name"
   label_other_category: Category for custom documents
@@ -18,10 +19,14 @@ en:
   field_document_type: Request type
   field_document_for: Document for
 
+  label_roaming_tracker: Roaming request tracker
   field_roaming_country: Country
   field_roaming_turn_on_date: Roaming turn on date
   field_roaming_turn_off_date: Roaming turn off date
-
+  label_roaming_country: Field "Country"
+  label_roaming_turn_on_date: Field "Roaming turn on date"
+  label_roaming_turn_off_date: Field "Roaming turn off date"
+  label_roaming_category: Roaming request category
 
   document_request_timing_note: Request filled before 15-00 will be ready tomorrow, otherwise day after tomorrow. 
 

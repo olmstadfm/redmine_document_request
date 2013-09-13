@@ -100,9 +100,9 @@
 
     switch(arg){
       case "#{@other_category_id}":
-        $("#custom-document").css("display", "block");
+        $("#custom-document").css("display", "block"); 
         break;
-      case "81":
+      case "#{@roaming_category_id}":
         $("#roaming").css("display", "block");      
         break;
     }
@@ -113,3 +113,6 @@
   :javascript
     window.onload = function() { $("#custom-document").css("display", "block") }
     
+- if @issue.category_id == @roaming_category_id then
+  :javascript
+    window.onload = function() { $("#roaming").css("display", "block") }

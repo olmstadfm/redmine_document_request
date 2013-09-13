@@ -59,10 +59,6 @@ class DocumentRequestController < ApplicationController
       unless @issue.category_id
         @issue.errors.messages[:category] = [l(:empty, scope: "activerecord.errors.messages")]
       end
-      unless true
-        @issue.errors.messages[:subject] = [l(:empty, scope: "activerecord.errors.messages")]
-        @issue.errors.messages[:description] = [l(:empty, scope: "activerecord.errors.messages")]
-      end
       render 'new' 
     end
 
@@ -72,12 +68,21 @@ class DocumentRequestController < ApplicationController
 
   def process_custom_document
     @custom_document = params.delete(:custom)
-    if @custom_document[:title].present? && @custom_document[:comment].present?
+
+    if @custom_document[:title].present? 
       @issue.subject = "#{l(:value_document_request_subject)}: #{@custom_document[:title]}"
-      @issue.description = "#{@custom_document[:comment]}"
-      @issue.assigned_to_id = @assigned_to_id
-      @issue.tracker_id = @tracker_id
+    else
+      @issue.errors.messages[:subject] = [l(:empty, scope: "activerecord.errors.messages")]
     end
+    if @custom_document[:comment].present?
+      @issue.description = "#{@custom_document[:comment]}"
+    else 
+      @issue.errors.messages[:description] = [l(:empty, scope: "activerecord.errors.messages")]
+    end
+
+    @issue.assigned_to_id = @assigned_to_id
+    @issue.tracker_id = @tracker_id
+
     params[:custom] = @custom_document
   end
 
@@ -106,11 +111,12 @@ class DocumentRequestController < ApplicationController
     @categories = @project.issue_categories.sort_by{|c| c.name}
 
     # fixme
-    @roaming_tracker = Tracker.find(11)
-    @roaming_country_field_id = 50
-    @roaming_turn_on_date_field_id = 48
-    @roaming_turn_off_date_field_id = 49
-    @roaming_category_id = 81
+    @roaming_tracker_id = @setting[:roaming_tracker_id]
+    @roaming_tracker = Tracker.find(@roaming_tracker_id)
+    @roaming_country_field_id = @setting[:country_field_id].to_i
+    @roaming_turn_on_date_field_id = @setting[:roaming_on_field_id].to_i
+    @roaming_turn_off_date_field_id = @setting[:roaming_off_field_id].to_i
+    @roaming_category_id = @setting[:roaming_category_id].to_i
 
     @companies = IssueCustomField.find(@company_name_field_id).possible_values.map{|c| [c,c] }
 
