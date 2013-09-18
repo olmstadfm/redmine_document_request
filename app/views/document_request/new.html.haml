@@ -12,9 +12,16 @@
 %h2
   = l(:label_new_document_header)
 
-= error_messages_for @issue
+= # error_messages_for @issue
 
 %div.box{width: "100%"}
+
+  %ul
+    %li= l(:label_document_request_help_fill_all)
+    %li= l(:label_document_request_help_roaming)
+    %li= l(:document_request_timing_note)
+    %li= l(:label_document_request_help_other)
+
   = form_tag({:controller => 'document_request', :action => 'create', :method => 'get'}, :html => {:id => 'issue-form', :multipart => true}) do
 
     .splitcontent
@@ -23,10 +30,9 @@
         %table
           %tr
             %td.label
-              = l(:field_company_name)
+              = l(:field_document_type)
               %span.required= " *"
-            %td
-              = custom_field_tag('issue', CustomValue.new(custom_field_id: @company_name_field_id))
+            %td= select_tag("issue[category_id]", options_from_collection_for_select(@categories, 'id', 'name', (params[:issue][:category_id].to_i rescue nil)), :prompt => t(:prompt_please_select), :onchange => "switchCustomDocumentForm(this.value)")
           %tr
             %td.label
               = l(:field_document_for)
@@ -36,9 +42,10 @@
               = # custom_field_tag('issue', CustomValue.new(custom_field_id: @document_for_field_id))
           %tr
             %td.label
-              = l(:field_document_type)
+              = l(:field_company_name)
               %span.required= " *"
-            %td= select_tag("issue[category_id]", options_from_collection_for_select(@categories, 'id', 'name', (params[:issue][:category_id].to_i rescue nil)), :prompt => t(:prompt_please_select), :onchange => "switchCustomDocumentForm(this.value)")
+            %td
+              = custom_field_tag('issue', CustomValue.new(custom_field_id: @company_name_field_id))
           %tr
             %td.label
               = l(:field_due_date) 
@@ -89,7 +96,7 @@
                 = text_field_tag("issue[custom_field_values][#{@roaming_turn_off_date_field_id}]", "", :style=>"width: 50%;")
                 = calendar_for("issue_custom_field_values_#{@roaming_turn_off_date_field_id}")
 
-%p= l(:document_request_timing_note)
+
 
 :javascript
 

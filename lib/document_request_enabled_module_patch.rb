@@ -90,30 +90,6 @@ module DocumentRequestPlugin
 
       def roaming_request_custom_fields_setup
 
-        hash_for_country_field = {
-          type: "IssueCustomField", 
-          name: "Страна", 
-          field_format: "string", 
-          possible_values: nil,
-          regexp: "", 
-          min_length: 0, 
-          max_length: 0, 
-          is_required: true, 
-          is_for_all: false, 
-          is_filter: true, 
-          searchable: true, 
-          default_value: nil, 
-          editable: true, 
-          visible: true, 
-          multiple: false
-        }
-
-        @roaming_request_country_field = find_or_create(IssueCustomField, hash_for_country_field)
-        Setting[:plugin_redmine_document_request][:country_field_id] = @roaming_request_country_field.id
-
-        @roaming_request_tracker.custom_fields << @roaming_request_country_field
-        @document_request_project.issue_custom_fields << @roaming_request_country_field
-
         hash_for_roaming_on_field = {
           type: "IssueCustomField",
           name: "Дата включения роуминга",
@@ -161,6 +137,30 @@ module DocumentRequestPlugin
 
         @roaming_request_tracker.custom_fields << @roaming_request_roaming_off_field
         @document_request_project.issue_custom_fields << @roaming_request_roaming_off_field
+
+        hash_for_country_field = {
+          type: "IssueCustomField", 
+          name: "Страна", 
+          field_format: "string", 
+          possible_values: nil,
+          regexp: "", 
+          min_length: 0, 
+          max_length: 0, 
+          is_required: true, 
+          is_for_all: false, 
+          is_filter: true, 
+          searchable: true, 
+          default_value: nil, 
+          editable: true, 
+          visible: true, 
+          multiple: false
+        }
+
+        @roaming_request_country_field = find_or_create(IssueCustomField, hash_for_country_field)
+        Setting[:plugin_redmine_document_request][:country_field_id] = @roaming_request_country_field.id
+
+        @roaming_request_tracker.custom_fields << @roaming_request_country_field
+        @document_request_project.issue_custom_fields << @roaming_request_country_field
 
       end
 

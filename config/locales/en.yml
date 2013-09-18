@@ -27,8 +27,10 @@ en:
   label_roaming_turn_on_date: Field "Roaming turn on date"
   label_roaming_turn_off_date: Field "Roaming turn off date"
   label_roaming_category: Roaming request category
+  value_roaming_issue_subject: Roaming request
 
   document_request_timing_note: Request filled before 15-00 will be ready tomorrow, otherwise day after tomorrow. 
 
   error_due_date_to_early: is too early
 
+  label_document_request_help: All fields are mandatory. 

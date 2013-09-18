@@ -34,12 +34,19 @@ namespace :document_request do
     IssueQuery.all.map(&:destroy)
     mourn "IssueQuery"
 
-    tracker = Tracker.find_by_name("Заявки на документ")
-    if tracker
-      Issue.where(tracker_id: tracker.id).map(&:destroy) 
-      tracker.destroy 
-    end
-    mourn "Tracker"
+    # tracker = Tracker.find_by_name("Заявки на документ")
+    # if tracker
+    #   Issue.where(tracker_id: tracker.id).map(&:destroy) 
+    #   tracker.destroy 
+    # end
+    # mourn "Tracker"
+
+    # tracker = Tracker.find_by_name("Заявки на роуминг")
+    # if tracker
+    #   Issue.where(tracker_id: tracker.id).map(&:destroy) 
+    #   tracker.destroy 
+    # end
+    # mourn "Tracker"
 
     Member.all.map(&:destroy)
     mourn "Members"
@@ -48,7 +55,7 @@ namespace :document_request do
     setting.destroy if setting
     mourn "Setting"
 
-    project = Project.find_by_name("Заявки на документ")
+    project = Project.find_by_name("brand new")
     project.destroy if project
     mourn "Project"
 

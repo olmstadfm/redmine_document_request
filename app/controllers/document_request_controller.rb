@@ -27,14 +27,8 @@ class DocumentRequestController < ApplicationController
       # category. now you must fill assigned_to_id manually.
       @issue.assigned_to_id = @category.assigned_to_id
 
-      # unless category_id == @roaming_category_id
-      #   @issue.tracker_id = @tracker_id
-      # else
-      #   @issue.tracker_id = @roaming_tracker.id
-      # end
-
       case @category.id
-        when 80 # @other_category_id
+        when @other_category_id # @other_category_id
           process_custom_document
         when @roaming_category_id
           process_roaming
@@ -87,7 +81,7 @@ class DocumentRequestController < ApplicationController
   end
 
   def process_roaming
-    @issue.subject = "Test"
+    @issue.subject = l(:value_roaming_issue_subject)
     @issue.tracker_id = @roaming_tracker.id
   end
 
@@ -110,7 +104,6 @@ class DocumentRequestController < ApplicationController
 
     @categories = @project.issue_categories.sort_by{|c| c.name}
 
-    # fixme
     @roaming_tracker_id = @setting[:roaming_tracker_id]
     @roaming_tracker = Tracker.find(@roaming_tracker_id)
     @roaming_country_field_id = @setting[:country_field_id].to_i
@@ -121,7 +114,6 @@ class DocumentRequestController < ApplicationController
     @companies = IssueCustomField.find(@company_name_field_id).possible_values.map{|c| [c,c] }
 
     @issue = @project.issues.new
-    # @issue.tracker = @roaming_tracker
 
   end
 
