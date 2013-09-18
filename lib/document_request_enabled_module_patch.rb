@@ -86,6 +86,9 @@ module DocumentRequestPlugin
           @document_request_project.trackers << @roaming_request_tracker
         end
 
+        @roaming_request_tracker.custom_fields << @document_request_document_for_field
+        @roaming_request_tracker.custom_fields << @document_request_company_name_field
+
       end
 
       def roaming_request_custom_fields_setup
