@@ -43,11 +43,11 @@ class DocumentRequestController < ApplicationController
 
     @issue.start_date = Date.today
 
-    if @issue.valid? && @issue.due_date >= due_date_calc && @issue.category_id
+    if @issue.valid? && @issue.due_date && @issue.due_date >= due_date_calc && @issue.category_id
       @issue.save
       redirect_to controller: 'issues', action: 'show', id: @issue.id
     else
-      if @issue.due_date < due_date_calc
+      if @issue.due_date && @issue.due_date < due_date_calc
         @issue.errors.messages[:due_date] = [l(:error_due_date_to_early)]
       end
       unless @issue.category_id

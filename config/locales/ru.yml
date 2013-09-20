@@ -33,6 +33,6 @@ ru:
   error_fill_document_category: не может быть пустым
 
   label_document_request_help_roaming: Чтобы отправить заявку на роуминг выберите тип заявки "Роуминг".
-  label_document_request_help_other: Если необходимого документа нет в списке, выберите тип заявки другое и заполните появившиеся поля.
+  label_document_request_help_other: Если необходимого документа нет в списке, выберите тип заявки "Другое" и заполните появившиеся поля.
   label_document_request_help_fill_all: Все поля обязательны для заполнения.
 
