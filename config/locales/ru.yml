@@ -1,5 +1,8 @@
 # Russian strings go here for Rails i18n
 ru:
+
+  label_internal_intercourse_menu: Внутреннее взаимодействие
+
   document_request: Заявки на документы и роуминг
   value_document_request_subject: Запрос на документ
 

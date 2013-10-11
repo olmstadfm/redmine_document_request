@@ -9,12 +9,27 @@ Redmine::Plugin.register :redmine_document_request do
 
   settings :partial => 'document_request/settings'
 
-  menu :top_menu, :document_request, {:controller => :document_request, :action => :new}, :caption => :document_request, :if => Proc.new{User.current.logged?}
+  Redmine::MenuManager.map :top_menu do |menu| 
+
+    unless menu.exists?(:internal_intercourse)
+      menu.push(:internal_intercourse, "#", 
+                { :after => :public_intercourse,
+                  :parent => :top_menu, 
+                  :caption => :label_internal_intercourse_menu
+                })
+    end
+
+    menu.push( :document_request, {:controller => :document_request, :action => :new}, 
+               { :parent => :internal_intercourse,            
+                 :caption => :document_request,
+                 :if => Proc.new{User.current.logged?}
+               })
+
+  end
 
   project_module :document_request do 
     permission :view_document_request, {:document_request => :index}
   end
-
 
 end
 
