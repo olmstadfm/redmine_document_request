@@ -11,16 +11,9 @@ Redmine::Plugin.register :redmine_document_request do
 
   Redmine::MenuManager.map :top_menu do |menu| 
 
-    unless menu.exists?(:internal_intercourse)
-      menu.push(:internal_intercourse, "#", 
-                { :after => :public_intercourse,
-                  :parent => :top_menu, 
-                  :caption => :label_internal_intercourse_menu
-                })
-    end
-
+    parent = menu.exists?(:internal_intercourse) ? :internal_intercourse : :top_menu
     menu.push( :document_request, {:controller => :document_request, :action => :new}, 
-               { :parent => :internal_intercourse,            
+               { :parent => parent,            
                  :caption => :document_request,
                  :if => Proc.new{User.current.logged?}
                })
