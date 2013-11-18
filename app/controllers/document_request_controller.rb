@@ -7,6 +7,8 @@ class DocumentRequestController < ApplicationController
   before_filter :require_login
   before_filter :settings_setup, :only => [:new, :create]
 
+  before_filter :company_check, :only => [:new]
+
   def new
     
   end
@@ -141,6 +143,10 @@ class DocumentRequestController < ApplicationController
       end
     end
     due_date
+  end
+
+  def company_check
+    render_403 unless Group.find(455).users.include?(User.current)
   end
 
 end
