@@ -11,17 +11,17 @@ Redmine::Plugin.register :redmine_document_request do
 
   Redmine::MenuManager.map :top_menu do |menu| 
 
-    parent = menu.exists?(:internal_intercourse) ? :internal_intercourse : :top_menu
-    menu.push( :document_request, {:controller => :document_request, :action => :new}, 
-               { :parent => parent,            
-                 :caption => :document_request,
-                 :if => Proc.new{User.current.logged?}
-               })
+    project_module :document_request do 
+      permission :create_document_request, {:document_request => :new}
+    end
 
-  end
+    # parent = menu.exists?(:internal_intercourse) ? :internal_intercourse : :top_menu
+    # menu.push( :document_request, {:controller => :document_request, :action => :new}, 
+    #            { :parent => parent,            
+    #              :caption => :document_request,
+    #              :if => Proc.new{ User.current.admin? }
+    #            })
 
-  project_module :document_request do 
-    permission :view_document_request, {:document_request => :index}
   end
 
 end

@@ -8,6 +8,7 @@ class DocumentRequestController < ApplicationController
   before_filter :settings_setup, :only => [:new, :create]
 
   def new
+    
   end
 
   def create
