@@ -19,7 +19,7 @@ Redmine::Plugin.register :redmine_document_request do
     menu.push( :document_request, {:controller => :document_request, :action => :new}, 
                { :parent => parent,            
                  :caption => :document_request,
-                 :if => Proc.new{ false }
+                 :if => Proc.new{ User.current.logged? }  # TODO if condition doesn't work for second-layer menu items 
                })
 
   end
