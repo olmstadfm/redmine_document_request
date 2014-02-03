@@ -31,8 +31,8 @@ class DocumentRequestController < ApplicationController
       @issue.assigned_to_id = @category.assigned_to_id
 
       case @category.id
-        when @other_category_id # @other_category_id
-          process_custom_document
+        # when @other_category_id # @other_category_id
+        #  process_custom_document
         when @roaming_category_id
           process_roaming
         else
@@ -42,7 +42,7 @@ class DocumentRequestController < ApplicationController
 
     end
 
-    @issue.safe_attributes = params[:issue] ##################
+    @issue.safe_attributes = params[:issue]
 
     @issue.start_date = Date.today
 
@@ -99,8 +99,8 @@ class DocumentRequestController < ApplicationController
     @company_name_field_id = @setting[:company_name_field_id]
     @document_for_field_id = @setting[:document_for_field_id].to_i
 
-    @other_category_id = @setting[:other_category_id].to_i
-    @other_category_name = IssueCategory.find(@other_category_id).try(:name)
+    # @other_category_id = @setting[:other_category_id].to_i
+    # @other_category_name = IssueCategory.find(@other_category_id).try(:name)
 
     @project = Project.find(@project_id)
     @due_date = due_date_calc

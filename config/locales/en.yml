@@ -11,7 +11,7 @@ en:
   label_document_tracker: Document request tracker
   label_document_for_field: Field "Document for"
   label_company_name_field: Field "Company name"
-  label_other_category: Category for custom documents
+# label_other_category: Category for custom documents
   label_custom_document_name: Document title
 
   field_document_request_comment: Comment 

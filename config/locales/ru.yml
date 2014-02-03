@@ -11,7 +11,7 @@ ru:
   label_document_tracker: Трекер для заявок на документы
   label_document_for_field: Поле "Документ для"
   label_company_name_field: Поле "Название компании"
-  label_other_category: Категория для документов, отсутствующих в перечне
+# label_other_category: Категория для документов, отсутствующих в перечне
   label_custom_document_name: Название документа
 
   field_document_request_comment: Комментарий 
