@@ -36,3 +36,5 @@ en:
   label_document_request_help_roaming: Set request type "Roaming" if you want to make roaming request.
   label_document_request_help_other: Set request type "Other" If you want to request document which is absent in a list of types.
   label_document_request_help_fill_all: All fields are mandatory.
+
+  label_roaming_settings: Roaming request params

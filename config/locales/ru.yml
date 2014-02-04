@@ -37,3 +37,4 @@ ru:
   label_document_request_help_other: Если необходимого документа нет в списке, выберите тип заявки "Другое" и заполните появившиеся поля.
   label_document_request_help_fill_all: Все поля обязательны для заполнения.
 
+  label_roaming_settings: "Параметры заявки на роуминг"
