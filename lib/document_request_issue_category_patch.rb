@@ -9,7 +9,7 @@ module DocumentRequestPlugin
       base.class_eval do
 
         validator = IssueCategory._validators[:name].find{|v| v.class == ActiveModel::Validations::LengthValidator}
-        validator.instance_eval{ @options = {:maximum=>120} }
+        validator.instance_eval{ @options = {:maximum=>150} }
 
       end
 
