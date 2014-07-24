@@ -38,3 +38,6 @@ en:
   label_document_request_help_fill_all: All fields are mandatory.
 
   label_roaming_settings: Roaming request params
+
+  label_project_ndfl: Project for accounting requests
+  label_categories_list: Types requests for accounting

@@ -5,6 +5,7 @@ class DocumentRequestController < ApplicationController
   helper CustomFieldsHelper
 
   before_filter :require_login
+  before_filter :project_setup, :only => [:create]
   before_filter :settings_setup, :only => [:new, :create]
 
   before_filter :authorize_by_group, :only => [:new, :create]
@@ -15,6 +16,7 @@ class DocumentRequestController < ApplicationController
 
   def create
 
+    
     @issue.project_id = @project_id
     @issue.author = User.current
     @issue.is_private = true
@@ -88,11 +90,20 @@ class DocumentRequestController < ApplicationController
     @issue.tracker_id = @roaming_tracker.id
   end
 
+  def project_setup
+    category_id = params[:issue][:category_id]
+    categories_list_id = Setting[:plugin_redmine_document_request][:categories_list_id]
+    @project_type = nil
+    if !categories_list_id.blank? && categories_list_id.include?(category_id)
+      @project_type = "ndfl"
+    end
+  end
+
   def settings_setup
 
     @setting = Setting[:plugin_redmine_document_request]
 
-    @project_id = @setting[:project_id]
+    @project_id = (@project_type == "ndfl" ? @setting[:project_ndfl_id] : @setting[:project_id])
     @assigned_to_id = @setting[:assigned_to_id]
     @tracker_id = @setting[:tracker_id]
 

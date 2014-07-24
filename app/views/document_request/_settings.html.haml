@@ -9,6 +9,17 @@
 %hr
 
 %p
+  %label= l(:label_project_ndfl)
+  = select_tag("settings[project_ndfl_id]", project_tree_options_for_select(Project.active.all(:order => :name), :selected => (Project.find(@settings[:project_ndfl_id]) rescue nil)), :prompt => t(:prompt_please_select))
+
+%p
+  %label= l(:label_categories_list)
+  - @options_for_category = begin Project.find(@settings[:project_id]).issue_categories rescue IssueCategory.all end
+  = select_tag("settings[categories_list_id]", options_from_collection_for_select(@options_for_category, :id, :name, (@settings[:categories_list_id] rescue nil)), :prompt => t(:prompt_please_select), :multiple => true)
+
+%hr
+
+%p
   %label= l(:label_document_tracker)
   = select_tag("settings[tracker_id]", options_from_collection_for_select(Tracker.all(:order => :position), :id, :name, (@settings[:tracker_id].to_i rescue nil)), :prompt => t(:prompt_please_select))
 

@@ -38,3 +38,6 @@ ru:
   label_document_request_help_fill_all: Все поля обязательны для заполнения.
 
   label_roaming_settings: "Параметры заявки на роуминг"
+
+  label_project_ndfl: Проект для бухгалтерских заявок
+  label_categories_list: Типы заявок для бухгалтерии
